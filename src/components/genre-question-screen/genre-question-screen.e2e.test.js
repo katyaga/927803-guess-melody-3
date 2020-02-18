@@ -1,5 +1,5 @@
 import React from "react";
-import {configure, shallow, render} from "enzyme";
+import {configure, shallow, mount} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 import GenreQuestionScreen from "./genre-question-screen.jsx";
 
@@ -55,14 +55,14 @@ it(`User answer passed to callback is consistent with "userAnswer" prop`, () => 
   const onAnswer = jest.fn((...args) => [...args]);
   const userAnswer = [false, true, false, false];
 
-  const genreQuestion = render(
+  const genreQuestion = mount(
       <GenreQuestionScreen
         onAnswer={onAnswer}
         question={question}
       />);
 
   const form = genreQuestion.find(`form`);
-  const inputTwo = genreQuestion.find(`div`).at(1).find(`input`);
+  const inputTwo = genreQuestion.find(`input`).at(1);
 
   inputTwo.simulate(`change`, {target: {checked: true}});
   form.simulate(`submit`, {preventDefault() {}});
@@ -73,6 +73,6 @@ it(`User answer passed to callback is consistent with "userAnswer" prop`, () => 
   expect(onAnswer.mock.calls[0][1]).toMatchObject(userAnswer);
 
   expect(
-      genreQuestion.find(`div`).at(1).find(`input`).map((it) => it.prop(`checked`))
+      genreQuestion.find(`input`).map((it) => it.prop(`checked`))
   ).toEqual(userAnswer);
 });
