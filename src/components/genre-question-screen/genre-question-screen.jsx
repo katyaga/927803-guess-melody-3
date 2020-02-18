@@ -1,12 +1,28 @@
 import React, {PureComponent} from "react";
 import PropTypes from "prop-types";
+import GenreQuestion from "../genre-question/genre-question.jsx";
 import {GameType} from "../../const.js";
 
 class GenreQuestionScreen extends PureComponent {
   constructor(props) {
     super(props);
+
+    this._onChangeInput = this._onChangeInput.bind(this);
     this.state = {
       answers: [false, false, false, false],
+    };
+  }
+
+  _onChangeInput(index, answers, userAnswers) {
+    return (evt) => {
+      const value = evt.target.checked;
+
+      this.setState({
+        answers: [
+          ...userAnswers.slice(0, index),
+          value,
+          ...userAnswers.slice(index + 1)],
+      });
     };
   }
 
@@ -49,32 +65,16 @@ class GenreQuestionScreen extends PureComponent {
             }}
           >
             {answers.map((answer, i) => (
-              <div key={`${i}-${answer.src}`} className="track">
-                <button className="track__button track__button--play" type="button"/>
-                <div className="track__status">
-                  <audio src={answer.src}/>
-                </div>
-                <div className="game__answer">
-                  <input className="game__input visually-hidden" type="checkbox" name="answer" value={`answer-${i}`}
-                    id={`answer-${i}`}
-                    checked={userAnswers[i]}
-                    onChange={(evt) => {
-                      const value = evt.target.checked;
-
-                      this.setState({
-                        answers: [...userAnswers.slice(0, i), value, ...userAnswers.slice(i + 1)],
-                      });
-                    }}
-                  />
-                  <label className="game__check" htmlFor={`answer-${i}`}>Отметить</label>
-                </div>
-              </div>
+              <GenreQuestion key={`${i}-${answer.src}`}
+                answers={this.state}
+                answer={answer}
+                i={i}
+                onChangeInput={this._onChangeInput(i, answers, userAnswers)}
+              />
             ))}
 
             <button className="game__submit button" type="submit">Ответить</button>
           </form>
-
-
         </section>
       </section>
     );
