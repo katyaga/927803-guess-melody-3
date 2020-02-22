@@ -17,9 +17,11 @@ it(`GenreQuestion is rendered correctly`, () => {
   const tree = renderer.create((
     <GenreQuestion
       i={i}
+      isPlaying={true}
       answers={answers}
       answer={answer}
       onChangeInput={() => {}}
+      onPlayButtonClick={() => {}}
     />
   ), {
     createNodeMock: () => {

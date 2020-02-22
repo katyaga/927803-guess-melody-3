@@ -8,7 +8,9 @@ class GenreQuestionScreen extends PureComponent {
     super(props);
 
     this._onChangeInput = this._onChangeInput.bind(this);
+
     this.state = {
+      // activePlayer: 0,
       answers: [false, false, false, false],
     };
   }
@@ -27,7 +29,9 @@ class GenreQuestionScreen extends PureComponent {
   }
 
   render() {
-    const {onAnswer, question} = this.props;
+    // const {onAnswer, question} = this.props;
+    // const {answers: userAnswers, activePlayer} = this.state;
+    const {onAnswer, question, renderPlayer} = this.props;
     const {answers: userAnswers} = this.state;
     const {
       answers,
@@ -35,47 +39,34 @@ class GenreQuestionScreen extends PureComponent {
     } = question;
 
     return (
-      <section className="game game--genre">
-        <header className="game__header">
-          <a className="game__back" href="#">
-            <span className="visually-hidden">Сыграть ещё раз</span>
-            <img className="game__logo" src="img/melody-logo-ginger.png" alt="Угадай мелодию"/>
-          </a>
+      <section className="game__screen">
+        <h2 className="game__title">Выберите {genre} треки</h2>
 
-          <svg xmlns="http://www.w3.org/2000/svg" className="timer" viewBox="0 0 780 780">
-            <circle className="timer__line" cx="390" cy="390" r="370"
-              style={{filter: `url(#blur)`, transform: `rotate(-90deg) scaleY(-1)`, transformOrigin: `center`}}/>
-          </svg>
+        <form
+          className="game__tracks"
+          onSubmit={(evt) => {
+            evt.preventDefault();
+            onAnswer(question, this.state.answers);
+          }}
+        >
+          {answers.map((answer, i) => (
+            <GenreQuestion
+              key={`${i}-${answer.src}`}
+              answers={this.state}
+              answer={answer}
+              i={i}
+              onChangeInput={this._onChangeInput(i, answers, userAnswers)}
+              onPlayButtonClick={() => {
+                this.setState({
+                  activePlayer: activePlayer === i ? -1 : i,
+                });
+              }}
+              isPlaying={i === activePlayer}
+            />
+          ))}
 
-          <div className="game__mistakes">
-            <div className="wrong"/>
-            <div className="wrong"/>
-            <div className="wrong"/>
-          </div>
-        </header>
-
-        <section className="game__screen">
-          <h2 className="game__title">Выберите {genre} треки</h2>
-
-          <form
-            className="game__tracks"
-            onSubmit={(evt) => {
-              evt.preventDefault();
-              onAnswer(question, this.state.answers);
-            }}
-          >
-            {answers.map((answer, i) => (
-              <GenreQuestion key={`${i}-${answer.src}`}
-                answers={this.state}
-                answer={answer}
-                i={i}
-                onChangeInput={this._onChangeInput(i, answers, userAnswers)}
-              />
-            ))}
-
-            <button className="game__submit button" type="submit">Ответить</button>
-          </form>
-        </section>
+          <button className="game__submit button" type="submit">Ответить</button>
+        </form>
       </section>
     );
   }
