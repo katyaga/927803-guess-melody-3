@@ -1,6 +1,5 @@
 import React, {PureComponent} from "react";
 import PropTypes from "prop-types";
-import GenreQuestion from "../genre-question/genre-question.jsx";
 import {GameType} from "../../const.js";
 
 class GenreQuestionScreen extends PureComponent {
@@ -29,8 +28,6 @@ class GenreQuestionScreen extends PureComponent {
   }
 
   render() {
-    // const {onAnswer, question} = this.props;
-    // const {answers: userAnswers, activePlayer} = this.state;
     const {onAnswer, question, renderPlayer} = this.props;
     const {answers: userAnswers} = this.state;
     const {
@@ -50,19 +47,22 @@ class GenreQuestionScreen extends PureComponent {
           }}
         >
           {answers.map((answer, i) => (
-            <GenreQuestion
-              key={`${i}-${answer.src}`}
-              answers={this.state}
-              answer={answer}
-              i={i}
-              onChangeInput={this._onChangeInput(i, answers, userAnswers)}
-              onPlayButtonClick={() => {
-                this.setState({
-                  activePlayer: activePlayer === i ? -1 : i,
-                });
-              }}
-              isPlaying={i === activePlayer}
-            />
+            <div key={`${i}-${answer.src}`} className="track">
+              {renderPlayer(answer.src, i)}
+              <div className="game__answer">
+                <input className="game__input visually-hidden" type="checkbox" name="answer" value={`answer-${i}`}
+                  id={`answer-${i}`}
+                  checked={userAnswers[i]}
+                  onChange={(evt) => {
+                    const value = evt.target.checked;
+                    this.setState({
+                      answers: [...userAnswers.slice(0, i), value, ...userAnswers.slice(i + 1)],
+                    });
+                  }}
+                />
+                <label className="game__check" htmlFor={`answer-${i}`}>Отметить</label>
+              </div>
+            </div>
           ))}
 
           <button className="game__submit button" type="submit">Ответить</button>
@@ -82,6 +82,7 @@ GenreQuestionScreen.propTypes = {
     genre: PropTypes.string.isRequired,
     type: PropTypes.oneOf([GameType.ARTIST, GameType.GENRE]).isRequired,
   }).isRequired,
+  renderPlayer: PropTypes.func.isRequired,
 };
 
 export default GenreQuestionScreen;
