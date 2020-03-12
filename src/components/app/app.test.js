@@ -4,7 +4,7 @@ import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
 import {App} from "./app.jsx";
 import NameSpace from "../../reducer/name-space.js";
-// import {AuthorizationStatus} from "../../reducer/user/user.js";
+import {AuthorizationStatus} from "../../reducer/user/user.js";
 
 const mockStore = configureStore([]);
 
@@ -56,6 +56,8 @@ describe(`Render App`, () => {
       .create(
           <Provider store={store}>
             <App
+              authorizationStatus={AuthorizationStatus.NO_AUTH}
+              login={() => {}}
               maxMistakes={3}
               mistakes={0}
               questions={questions}
@@ -81,6 +83,8 @@ describe(`Render App`, () => {
       .create(
           <Provider store={store}>
             <App
+              authorizationStatus={AuthorizationStatus.NO_AUTH}
+              login={() => {}}
               maxMistakes={3}
               mistakes={0}
               questions={questions}
@@ -110,6 +114,8 @@ describe(`Render App`, () => {
       .create(
           <Provider store={store}>
             <App
+              authorizationStatus={AuthorizationStatus.NO_AUTH}
+              login={() => {}}
               maxMistakes={3}
               mistakes={0}
               questions={questions}
@@ -139,6 +145,8 @@ describe(`Render App`, () => {
       .create(
           <Provider store={store}>
             <App
+              authorizationStatus={AuthorizationStatus.NO_AUTH}
+              login={() => {}}
               maxMistakes={3}
               mistakes={3}
               questions={questions}
@@ -168,6 +176,8 @@ describe(`Render App`, () => {
       .create(
           <Provider store={store}>
             <App
+              authorizationStatus={AuthorizationStatus.NO_AUTH}
+              login={() => {}}
               maxMistakes={3}
               mistakes={0}
               questions={questions}
@@ -183,6 +193,36 @@ describe(`Render App`, () => {
           })
       .toJSON();
 
+    expect(tree).toMatchSnapshot();
+  });
+
+  it(`Render AuthScreen`, () => {
+    const store = mockStore({
+      [NameSpace.GAME]: {
+        mistakes: 3,
+      },
+    });
+
+    const tree = renderer
+      .create(
+          <Provider store={store}>
+            <App
+              authorizationStatus={AuthorizationStatus.NO_AUTH}
+              login={() => {}}
+              maxMistakes={3}
+              mistakes={0}
+              questions={questions}
+              onUserAnswer={() => {}}
+              onWelcomeButtonClick={() => {}}
+              resetGame={() => {}}
+              step={3}
+            />
+          </Provider>, {
+            createNodeMock: () => {
+              return {};
+            }
+          })
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
 });
